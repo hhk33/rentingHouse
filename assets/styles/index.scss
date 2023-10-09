@@ -1,0 +1,91 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  font-family: "Microsoft YaHei", "微软雅黑", "STHeiti", "WenQuanYi Micro Hei", SimSun, sans-serif;
+  font-size: 14px;
+  line-height: 140%;
+}
+
+ul, li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: #333333;
+}
+
+.flex {
+  display: flex;
+}
+
+.btn {
+  width: 90px;
+  height: 30px;
+  line-height: 30px;
+  border-radius: 30px;
+  text-align: center;
+  font-size: 16px;
+  color: $gray;
+  cursor: pointer;
+}
+
+.btn + .btn {
+  margin-left: 25px;
+}
+
+.active {
+  background-color: $btnActive;
+  color: $primary;
+}
+
+p {
+  margin-top: 35px;
+  font-size: 40px;
+  font-weight: bolder;
+  color: $textColor;
+}
+
+.tip {
+  margin-bottom: 10px;
+  color: $gray;
+  font-size: 16px;
+}
+
+.search {
+  margin-right: 48px;
+  padding: 4px;
+  border: 1px solid $gray;
+  border-radius: 48px;
+
+  .el-input__wrapper {
+    box-shadow: none !important;
+    outline: none;
+    border-radius: 48px;
+    background-color: transparent;
+  }
+  .el-input-group__append,
+  .el-input-group__prepend {
+    padding: 0;
+    border-radius: 48px;
+    background-color: #ffffff;
+    box-shadow: none;
+
+  }
+  .el-input-group__prepend {
+    background-color: transparent;
+  }
+}
+
+@media only screen and (max-width: 768px){
+  .container {
+      width: auto;
+      margin: 0 auto;
+      padding: 0 10px;
+      overflow: hidden;
+  }
+}
