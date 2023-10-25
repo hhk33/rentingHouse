@@ -2,6 +2,16 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@element-plus/nuxt'],
+  app: {
+    head: {
+      title: '安居',
+      meta: [
+        { name: 'description', content: '自助房屋租赁平台' }
+      ],
+      script: [
+      ]
+    }
+  },
   css: [
     'element-plus/dist/index.css',
     'element-plus/theme-chalk/display.css',
@@ -15,5 +25,5 @@ export default defineNuxtConfig({
         },
       },
     }
-  }
+  },
 })

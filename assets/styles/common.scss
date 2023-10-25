@@ -1,0 +1,133 @@
+.btn {
+  width: 90px;
+  height: 30px;
+  line-height: 30px;
+  border-radius: 30px;
+  border: 1px solid $gray;
+  text-align: center;
+  font-size: 16px;
+  color: $gray;
+  cursor: pointer;
+}
+
+.btn + .btn {
+  margin-left: 25px;
+}
+
+.active {
+  background-color: $btnActive;
+  color: $primary;
+  border: 1px solid $btnActive;
+}
+
+.container {
+  padding-left: $headerLeft;
+  padding-top: calc($headerHigh + 30px);
+}
+
+.heading {
+  margin-top: 35px;
+  font-size: 40px;
+  font-weight: bolder;
+  color: $textColor;
+}
+
+.tip {
+  margin-bottom: 10px;
+  color: $gray;
+  font-size: 16px;
+}
+
+.search {
+  margin-right: 48px;
+  padding: 4px;
+  border: 1px solid $gray;
+  border-radius: 48px;
+  .el-input__wrapper {
+    box-shadow: none !important;
+    outline: none;
+    border-radius: 48px;
+    background-color: transparent;
+  }
+  .el-input-group__append,
+  .el-input-group__prepend {
+    padding: 0;
+    border-radius: 48px;
+    background-color: #ffffff;
+    box-shadow: none;
+  }
+  .el-input-group__prepend {
+    background-color: transparent;
+  }
+}
+
+.show-box {
+  position: relative;
+  margin: 80px 100px 50px 40px;
+  .subheading {
+    color: $orange;
+  }
+  .subheading::before {  
+    content: "";
+    display: inline-block;
+    position: relative;
+    top: -5px;
+    width: 40px;  
+    height: 1px;
+    margin-left: -40px;
+    background: $orange;
+  }
+  .heading {
+    margin-top: 20px;
+    font-size: 32px;
+    font-weight: normal;
+  }
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.is-horizontal {
+  height: 0px;
+  left: 0px;
+  display: none;
+}
+
+.el-scrollbar__wrap {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.waves-ripple {
+  position: absolute;
+  border-radius: 100%;
+  background-color: rgba(0, 0, 0, 0.15);
+  background-clip: padding-box;
+  pointer-events: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-transform: scale(0);
+  -ms-transform: scale(0);
+  transform: scale(0);
+  opacity: 1;
+}
+
+.waves-ripple.z-active {
+  opacity: 0;
+  -webkit-transform: scale(2);
+  -ms-transform: scale(2);
+  transform: scale(2);
+  -webkit-transition: opacity 1.2s ease-out, -webkit-transform 0.6s ease-out;
+  transition: opacity 1.2s ease-out, -webkit-transform 0.6s ease-out;
+  transition: opacity 1.2s ease-out, transform 0.6s ease-out;
+  transition: opacity 1.2s ease-out, transform 0.6s ease-out, -webkit-transform 0.6s ease-out;
+}
