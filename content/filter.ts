@@ -1,6 +1,9 @@
-export const filter = {
-  way: {
+import { filterItemType } from '@/types/search'
+
+export const filter: filterItemType[] = [
+  {
     title: "方式",
+    titleEn: 'way',
     show: true,
     options: [
       { id: "wa01", label: "不限" },
@@ -8,8 +11,9 @@ export const filter = {
       { id: "wa03", label: "合租" }
     ]
   },
-  price: {
+  {
     title: "租金",
+    titleEn: 'price',
     show: true,
     options: [
       { id: "pr01", label: "≤1000元" },
@@ -20,8 +24,9 @@ export const filter = {
       { id: "pr06", label: "4500元" }
     ]
   },
-  type: {
+  {
     title: "户型",
+    titleEn: 'type',
     show: true,
     options: [
       { id: "ty01", label: "一居" },
@@ -30,8 +35,9 @@ export const filter = {
       { id: "ty04", label: "四居+" }
     ]
   },
-  toward: {
+  {
     title: "朝向",
+    titleEn: 'toward',
     show: true,
     options: [
       { id: "to01", label: "东" },
@@ -41,8 +47,9 @@ export const filter = {
       { id: "to05", label: "南北" },
     ]
   },
-  area: {
+  {
     title: "面积",
+    titleEn: 'area',
     show: true,
     options: [
       { id: "ar01", label: "≤40m²" },
@@ -53,8 +60,9 @@ export const filter = {
       { id: "ar06", label: "≥120m²" },
     ]
   },
-  feature: {
+  {
     title: "特点",
+    titleEn: 'feature',
     show: false,
     options: [
       { id: "fe01", label: "近地铁" },
@@ -67,8 +75,9 @@ export const filter = {
       { id: "fe08", label: "房东直租" },
     ]
   },
-  tenancy: {
+  {
     title: "租期",
+    titleEn: 'tenancy',
     show: false,
     options: [
       { id: "te01", label: "月租" },
@@ -76,8 +85,9 @@ export const filter = {
       { id: "te03", label: "一个月起租" },
     ]
   },
-  floor: {
+  {
     title: "楼层",
+    titleEn: 'floor',
     show: false,
     options: [
       { id: "fl01", label: "低楼层" },
@@ -85,12 +95,13 @@ export const filter = {
       { id: "fl03", label: "高楼层" },
     ]
   },
-  elevator: {
+  {
     title: "电梯",
+    titleEn: 'elevator',
     show: false,
     options: [
       { id: "el01", label: "有电梯" },
       { id: "el02", label: "无电梯" },
     ]
   }
-}
+]

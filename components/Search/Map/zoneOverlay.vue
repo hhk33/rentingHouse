@@ -7,7 +7,7 @@
     @draw="draw">
     <div >
       <p>{{text.name}}</p>
-      <p>{{text.houseCnt}}个</p>
+      <p>{{text.count}}套</p>
     </div>
   </BmOverlay>
 </template>

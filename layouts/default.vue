@@ -8,10 +8,10 @@
         </div>
         <div class="details flex">
           <div class="btn">我要租房</div>
-          <div class="btn">我要出租</div>
+          <div class="btn" @click="navigate('/proprietor')">我要出租</div>
           <div class="btn">联系我们</div>
           <div class="login flex">
-            <div class="btn active">登录</div>
+            <div class="btn active" @click="setDialogVisible(true)">登录</div>
             <!-- <el-avatar :size="28" :src="circleUrl" />
             <span class="username">137****0000</span> -->
           </div>
@@ -31,12 +31,17 @@
       </div>
     </div>
     <slot />
+    <Login />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { Search } from '@element-plus/icons-vue'
+import useStore from '@/composables/store'
+
+const userStore = useStore.user()
+const { setDialogVisible } = userStore
 
 const route = useRoute()
 // const circleUrl = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'

@@ -10,7 +10,7 @@ interface HttpParms {
   headers?: any
 }
 
-export const requset = (obj: HttpParms) => {
+export const requset123 = (obj: HttpParms) => {
   const token = useCookie('token').value || null
   const res = new Promise((resolve, reject) => {
     useFetch(

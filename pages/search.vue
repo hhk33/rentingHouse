@@ -10,12 +10,18 @@
       </el-input>
     </div>
     <div>
-      <el-tabs
-        v-model="activeName"
-        class="demo-tabs"
-      >
+      <el-tabs class="demo-tabs" v-model="activeName">
         <el-tab-pane label="筛选搜索" name="filter">
           <SearchFilter/>
+          <div class="house-list">
+            <SearchHouseItem v-for="item in 8" :key="item" @click="navigate('/details')"/>
+            <el-pagination
+              class="pagination"
+              layout="prev, pager, next"
+              :total="40"
+              :page-size="8"
+            />
+          </div>
         </el-tab-pane>
         <el-tab-pane label="地图搜索" name="map">
           <LazySearchMap/>
@@ -55,5 +61,16 @@ const activeName = ref('filter')
   color: #6b778c;
   font-size: 32px;
   font-weight: 600;
+}
+.demo-tabs {
+  .house-list {
+    width: 1000px;
+    margin-bottom: 50px;
+    .pagination {
+      position: absolute;
+      bottom: 30px;
+      right: 540px;
+    }
+  }
 }
 </style>

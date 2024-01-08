@@ -63,25 +63,27 @@
 
 .show-box {
   position: relative;
+  // width: 1290px;
   margin: 80px 100px 50px 40px;
-  .subheading {
-    color: $orange;
-  }
-  .subheading::before {  
-    content: "";
-    display: inline-block;
-    position: relative;
-    top: -5px;
-    width: 40px;  
-    height: 1px;
-    margin-left: -40px;
-    background: $orange;
-  }
   .heading {
     margin-top: 20px;
     font-size: 32px;
     font-weight: normal;
   }
+}
+
+.subheading {
+  color: $orange;
+}
+.subheading::before {  
+  content: "";
+  display: inline-block;
+  position: relative;
+  top: -5px;
+  width: 40px;  
+  height: 1px;
+  margin-left: -40px;
+  background: $orange;
 }
 
 .flex {
@@ -130,4 +132,64 @@
   transition: opacity 1.2s ease-out, -webkit-transform 0.6s ease-out;
   transition: opacity 1.2s ease-out, transform 0.6s ease-out;
   transition: opacity 1.2s ease-out, transform 0.6s ease-out, -webkit-transform 0.6s ease-out;
+}
+
+.el-form-item {
+  margin-bottom: 10px !important; 
+}
+
+.active_btn {
+  color: $primary;
+}
+
+.priceRange {
+  position: absolute;
+  top: 90px;
+  right: 220px;
+  vertical-align: bottom;
+
+  .priceRange-input {
+    width: 70px;
+    margin-top: 10px;
+  }
+
+  .line {
+    position: relative;
+    top: 5px;
+    margin: 0 5px;
+  }
+
+  .unit {
+    position: relative;
+    top: 15px;
+    margin-left: 5px;
+    font-size: 12px;
+  }
+  
+  .btn {
+    display: inline-block;
+    width: 50px;
+    height: 25px;
+    line-height: 25px;
+    position: relative;
+    top: 10px;
+    margin-left: 20px;
+    border: none;
+    border-radius: 3px;
+    color: #ffffff;
+    background-color: $primary;
+  }
+}
+
+.btn-list {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  margin: -34px 0 0 0;
+  
+  .btn {
+    width: 60px;
+    height: 40px;
+    line-height: 40px;
+  }
 }

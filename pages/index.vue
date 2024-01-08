@@ -3,6 +3,7 @@
     <HomeHeader />
     <HomeRecommend />
     <HomeLandload />
+    <Recommend />
   </div>
 </template>
 
