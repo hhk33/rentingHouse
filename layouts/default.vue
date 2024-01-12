@@ -126,21 +126,28 @@ onBeforeUnmount(() => {
   align-items: center;
 }
 
-@media screen and (min-width: 824px){
-  .details {
-    display: flex;
-  }
-  .operation {
-    display: none;
-  }
+.details {
+  display: flex;
+}
+.operation {
+  display: none;
 }
 
-@media screen and (max-width: 824px) {
-  .details {
-    display: none;
-  }
-  .operation {
-    display: block;
-  }
-}
+// @media screen and (min-width: 824px){
+//   .details {
+//     display: flex;
+//   }
+//   .operation {
+//     display: none;
+//   }
+// }
+
+// @media screen and (max-width: 824px) {
+//   .details {
+//     display: none;
+//   }
+//   .operation {
+//     display: block;
+//   }
+// }
 </style>

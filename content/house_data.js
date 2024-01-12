@@ -2138,4 +2138,4 @@ export const areaData = {
         border: "",
         topRichText: "可视区域内为您找到<span style=\"color:#3072f6\">87668</span>套房子"
         }
-        }
+}

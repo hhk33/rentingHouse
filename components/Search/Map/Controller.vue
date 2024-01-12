@@ -135,7 +135,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { filter } from '@/content/filter'
 import city from '@/content/city.json'
-import { PriceFormType, moreFormType, filterItemType } from '@/types/Search/index'
+import { PriceFormType, moreFormType, filterItemType } from '@/types/search'
 
 // 是否展示房屋
 let showHouseDetal = ref<boolean>(false)

@@ -4,6 +4,8 @@ export default defineNuxtConfig({
   modules: [
     '@element-plus/nuxt',
     '@pinia/nuxt',
+    'nuxt-swiper',
+    '@nuxtjs/svg-sprite'
   ],
   app: {
     head: {
@@ -29,4 +31,6 @@ export default defineNuxtConfig({
       },
     }
   },
+  svgSprite: {
+  }
 })

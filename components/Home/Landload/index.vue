@@ -19,14 +19,14 @@
             <div class="icon-list flex">
               <Icon class="icon-item" img="refrigerator" name="冰箱" :size="15"/>
               <Icon class="icon-item" img="washing" name="洗衣机" :size="15"/>
-              <Icon class="icon-item" img="elevator" name="电梯" :size="15"/>
+              <Icon class="icon-item" img="heater" name="热水器" :size="15"/>
               <Icon class="icon-item" img="gas" name="天然气" :size="15"/>
               <Icon class="icon-item" img="wifi" name="宽带" :size="15"/>
               <Icon class="icon-item" img="air-conditioning" name="空调" :size="15"/>
             </div>
             <div class="apartment-info flex">
               <img class="apt-img" src="~/assets/img/apt.jpg">
-              <div class="apt-info">
+              <div>
                 <h3>桂晶</h3>
                 <span>乐柚公寓</span>
               </div>
@@ -128,14 +128,6 @@
       }
       .apartment-info {
         margin: 30px 0 0 20px;
-        .apt-img {
-          display: block;
-          width: 50px;
-          height: 50px;
-          margin-right: 20px;
-          border-radius: 50px;
-          border: 1px solid $gray;
-        }
         .apt-btn {
           width: 140px;
           height: 40px;

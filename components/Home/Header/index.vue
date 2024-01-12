@@ -79,17 +79,19 @@ let searchVal = ref<string>('')
     top: 0;
     width: 800px;
     height: 560px;
-  }
-}
-@media  screen and (max-width: 824px) {
-  img {
-    left: 0;
-  }
-}
-@media screen and (min-width: 824px){
-  img {
     right: 0;
     border-radius: 0 0 0 60px;
   }
 }
+// @media screen and (max-width: 824px) {
+//   img {
+//     left: 0;
+//   }
+// }
+// @media screen and (min-width: 824px){
+//   img {
+//     right: 0;
+//     border-radius: 0 0 0 60px;
+//   }
+// }
 </style>

@@ -1,36 +1,209 @@
 <template>
-  <div class="container flex">
-    <div class="carousel">
-      <el-carousel type="card" height="240px">
-        <el-carousel-item >
-          <img src="~/assets/img/apartment_1.jpg" alt="">
-        </el-carousel-item>
-        <el-carousel-item >
-          <img src="~/assets/img/apartment_2.jpg" alt="">
-        </el-carousel-item>
-        <el-carousel-item >
-          <img src="~/assets/img/apartment_3.jpg" alt="">
-        </el-carousel-item>
-        <el-carousel-item >
-          <img src="~/assets/img/apartment_4.jpg" alt="">
-        </el-carousel-item>
-      </el-carousel>
+  <div>
+    <div class="swiper-content">
+      <DetailsSwiper/>
+    </div>
+    <div class="flex-box">
+      <div class="content">
+        <h1 class="title">城西银泰城步行8分钟-温馨两居loft</h1>
+        <h3 class="subtitle">基本信息</h3>
+        <div class="info">
+          <div class="line">
+            <span>面积：{{ `48` }}㎡</span>
+            <span>朝向：{{ `南` }}</span>
+          </div>
+          <div class="line">
+            <span>维护：{{ `今天` }}</span>
+            <span>入住：2024-01-10</span>
+          </div>
+          <div class="line">
+            <span>楼层：高楼层/33层</span>
+            <span>电梯：有</span>
+          </div>
+          <div class="line">
+            <span>车位：暂无数据</span>
+            <span>用水：民水</span>
+          </div>
+          <div class="line">
+            <span>用电：民电</span>
+            <span>燃气：有</span>
+          </div>
+          <div class="line">
+            <span>采暖：自采暖</span>
+            <span>租期：1年以内</span>
+          </div>
+          <div class="line">
+            <span>看房：需提前预约</span>
+          </div>
+        </div>
+        <h3 class="subtitle">配套设施</h3>
+        <div class="info icon-content">
+          <Icon class="icon-item" img="washing" name="洗衣机" :size="20"/>
+          <Icon class="icon-item" img="air-conditioning" name="空调" :size="20"/>
+          <Icon class="icon-item" img="wardrobe" name="衣柜" :size="20"/>
+          <Icon class="icon-item" img="tv" name="电视" :size="20"/>
+          <Icon class="icon-item" img="refrigerator" name="冰箱" :size="20"/>
+          <Icon class="icon-item" img="heater" name="热水器" :size="20"/>
+          <Icon class="icon-item" img="bed" name="床" :size="20"/>
+          <Icon class="icon-item" img="heating" name="暖气" :size="20" :disabled="true"/>
+          <Icon class="icon-item" img="wifi" name="宽带" :size="20"/>
+          <Icon class="icon-item" img="gas" name="天然气" :size="20"/>
+        </div>
+        <h3 class="subtitle">房源图片</h3>
+        <div class="info">
+          <DetailsImg/>
+        </div>
+        <h3 class="subtitle">费用详情</h3>
+        <div class="info flex pay-content">
+          <div class="pay-item">
+            <p>付款方式</p>
+            <p>月付</p>
+          </div>
+          <div class="pay-item">
+            <p>租金<span class="gray"> (元/月)</span></p>
+            <p class="red">2000</p>
+          </div>
+          <div class="pay-item">
+            <p>押金<span class="gray"> (元)</span></p>
+            <p>2000</p>
+          </div>
+          <div class="pay-item">
+            <p>服务费<span class="gray"> (元/月)</span></p>
+            <p>200</p>
+          </div>
+        </div>
+        <h3 class="subtitle">地址与交通</h3>
+        <div class="info">
+          <DetailsMap/>
+        </div>
+        <h3 class="subtitle">其他推荐</h3>
+        <div class="info">
+          <Recommend :size="16" :num="6"/>
+        </div>
+      </div>
+      <div class="contact">
+        <div class="house-info">
+          <img src="@/assets/img/apartment_1.jpg" alt="">
+          <h1 class="title">城西银泰城步行8分钟-温馨两居loft</h1>
+          <p class="area gray">一居 | 48.00㎡ | 南 </p>
+          <p class="red">2000 元/月</p>
+          <el-icon class="star"><Star /></el-icon>
+        </div>
+        <div>
+          <div class="contacter flex">
+            <img class="apt-img" src="~/assets/img/apt.jpg">
+            <div>
+              <h4>桂晶</h4>
+              <span>乐柚公寓</span>
+            </div>
+          </div>
+          <div class="flex">
+            <div class="btn primary-btn">在线咨询</div>
+            <div class="btn active">预约看房</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {} from 'vue'
+
 </script>
 
 <style lang="scss" scoped>
-.flex {
-  justify-content: center;
-}
-.carousel {
+.swiper-content {
   width: 1000px;
-  img {
-    width: 480px;
+  margin: 0 auto;
+  padding-top: 100px;
+}
+.flex-box {
+  display: flex;
+}
+.content {
+  padding: 40px 0 40px 180px;
+  .title {
+    color: $textColor;
+  }
+  .subtitle {
+    margin: 40px 0 20px 0;
+    color: $gray;
+  }
+  .info {
+    width: 720px;
+    margin-left: 120px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid $grayLine;
+    .line {
+      margin: 20px;
+      span {
+        display: inline-block;
+        width: 300px;
+      }
+    }
+  }
+  .icon-content {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    .icon-item {
+      width: 130px;
+      height: 125px;
+    }
+  }
+  .pay-content {
+    font-size: 16px;
+    .pay-item {
+      margin: 0 40px;
+      p + p {
+        margin-top: 30px;
+      }
+    }
+  }
+}
+.contact {
+  position: sticky;
+  top: 110px;
+  width: 320px;
+  height: 400px;
+  margin: 40px 0 0 60px;
+  .house-info {
+    padding: 10px;
+    box-shadow: 0 0 4px #cacaca;
+    border-radius: 5px;
+    img {
+      width: 100%;
+      height: 80px;
+      object-fit: cover;
+    }
+    .title {
+      font-size: 18px;
+      color: $textColor;
+    }
+    .area {
+      margin:10px 0 5px 0;
+      font-size: 14px;
+    }
+    .star {
+      transform: scale(1.2);
+      margin: -40px 10px 0 0;
+      float: right;
+    }
+  }
+  .contacter {
+    margin: 50px 20px 0 0;
+    .apt-img {
+      width: 40px;
+      height: 40px;
+      margin-right: 40px;
+    }
+  }
+  .btn {
+    width: 150px;
+    height: 40px;
+    margin-top: 20px;
+    line-height: 40px;
+    border-radius: 2px;
   }
 }
 </style>
