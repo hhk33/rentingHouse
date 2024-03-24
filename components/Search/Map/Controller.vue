@@ -6,15 +6,32 @@
           <p class="line" @click="handleShowLocation">杭州
             <el-icon :size="10"><CaretBottom /></el-icon>
           </p>
-          <p>可视区域内为您找到 11346 套房子</p>
+          <p>可视区域内为您找到 {{ props.pageInfo.total }} 套房子</p>
           <span class="show_btn" @click="handleShowHouseDetal">
             <el-icon :size="15" v-show="!showHouseDetal"><ArrowUp/></el-icon>
             <el-icon :size="15" v-show="showHouseDetal"><ArrowDown/></el-icon>
           </span>
         </div>
         <div class="house_detal list" v-show="showHouseDetal">
-          <div v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <p v-for="i in count" :key="i" class="infinite-list-item">{{ i }}</p>
+          <div v-infinite-scroll="load"
+            class="infinite-list"
+            style="overflow: auto"
+            infinite-scroll-immediate
+            :infinite-scroll-distance="10"
+          >
+            <div
+              class="flex inf-item"
+              v-for="item in props.pageInfo.data"
+              :key="item.houseId"
+              @click="toDetail(item.houseId)"
+            >
+              <img :src="item.houseImg.split('&')[0]" class="inf-img">
+              <div class="inf-content">
+                <h2 class="inf-title">{{ item.title }}</h2>
+                <p class="inf-tip">{{ item.area }}m² | {{ item.desc }} | {{ item.direct }}</p>
+                <p class="inf-price">{{ item.rent }} 元/月</p>
+              </div>
+            </div>
           </div>
         </div>
         <div class="location_detal list" v-show="showLocation">
@@ -78,29 +95,28 @@
             <div class="form_item" v-show="lastFilterType === 'price'">
               <div class="form_item" v-for="item in getFilter(['price'])" :key="item.titleEn">
                 <p class="form_title">{{ item.title }}</p>
-                <el-checkbox-group v-model="priceForm.options">
+                <el-checkbox-group v-model="form.price">
                   <el-checkbox v-for="opt in item.options" :key="opt.id" :label="opt.id">{{ opt.label }}</el-checkbox>
                 </el-checkbox-group>
                 <div class="priceRange">
-                  <el-input class="priceRange-input" v-model.number="priceForm.range.minn"/>
+                  <el-input class="priceRange-input" v-model.number="form.priceRange.minn"/>
                   <span class="line">—</span>
-                  <el-input class="priceRange-input" v-model.number="priceForm.range.maxn"/>
+                  <el-input class="priceRange-input" v-model.number="form.priceRange.maxn"/>
                   <span class="unit">元/月</span>
                 </div>
               </div>
             </div>
             <div class="form_item" v-show="lastFilterType === 'way'">
-              <div class="form_item" v-for="item in getFilter(['way'])" :key="item.titleEn">
-                <p class="form_title">{{ item.title }}</p>
-                <el-checkbox-group v-model="wayForm" >
-                  <el-checkbox v-for="opt in item.options" :key="opt.id" :label="opt.id">{{ opt.label }}</el-checkbox>
-                </el-checkbox-group>
-              </div>
+              <ul>
+                <li :class="[{li_active: form.way === ''}]" @click="form.way = ''">不限</li>
+                <li :class="[{li_active: form.way === '00'}]" @click="form.way = '00'">整租</li>
+                <li :class="[{li_active: form.way === '01'}]" @click="form.way = '01'">合租</li>
+              </ul>
             </div>
             <div class="form_item" v-show="lastFilterType === 'type'">
               <div class="form_item" v-for="item in getFilter(['type'])" :key="item.titleEn">
                 <p class="form_title">{{ item.title }}</p>
-                <el-checkbox-group v-model="typeForm">
+                <el-checkbox-group v-model="form.type">
                   <el-checkbox v-for="opt in item.options" :key="opt.id" :label="opt.id">{{ opt.label }}</el-checkbox>
                 </el-checkbox-group>
               </div>
@@ -113,7 +129,7 @@
                   :key="item.titleEn"
                 >
                   <p class="form_title">{{ item.title }}</p>
-                  <el-checkbox-group v-model="moreForm[(item.titleEn as keyof moreFormType)]">
+                  <el-checkbox-group v-model="form[item.titleEn]">
                     <el-checkbox v-for="opt in item.options" :key="opt.id" :label="opt.id">{{ opt.label }}</el-checkbox>
                   </el-checkbox-group>
                 </div>
@@ -135,7 +151,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { filter } from '@/content/filter'
 import city from '@/content/city.json'
-import { PriceFormType, moreFormType, filterItemType } from '@/types/search'
+import { filterItemType } from '@/types/search'
 
 // 是否展示房屋
 let showHouseDetal = ref<boolean>(false)
@@ -145,11 +161,35 @@ const handleShowHouseDetal = () => {
   }
   showHouseDetal.value = !showHouseDetal.value
 }
+
+const props = defineProps(['pageInfo'])
+const emits = defineEmits(['loadPageInfo', 'searchWithOptions'])
+
+const form = ref({
+  way: '',
+  price: [],
+  priceRange: {
+    minn: null,
+    maxn: null
+  },
+  type: [],
+  toward: [],
+  area: [],
+  feature: [],
+  tenancy: [],
+  floor: [],
+  elevator: []
+})
+
+defineExpose({
+  form
+})
+
 // 无限滚动
-const count = ref(10)
 const load = () => {
-  count.value += 2
+  emits('loadPageInfo')
 }
+
 // 是否显示定位
 let showLocation = ref<boolean>(false)
 const handleShowLocation = () => {
@@ -158,24 +198,7 @@ const handleShowLocation = () => {
   }
   showLocation.value = !showLocation.value
 }
-// 筛选项数据
-let priceForm = ref<PriceFormType>({
-  options: [],
-  range: {
-    maxn: null,
-    minn: null
-  }
-})
-let wayForm = ref<string[]>([])
-let typeForm = ref<string[]>([])
-let moreForm = ref<moreFormType>({
-  toward: [],
-  area: [],
-  feature: [],
-  tenancy: [],
-  floor: [],
-  elevator: []
-})
+
 // 是否展示筛选
 let showFilterDetal = ref<boolean>(false)
 let lastFilterType= ref<string>('')
@@ -189,27 +212,34 @@ const handleShowFilterDetal = (type: string) => {
     lastFilterType.value = type
   }
 }
+
 // 清空当前表单
 const clearForm = () => {
   if(lastFilterType.value === 'price'){
-    priceForm.value.options = []
-    priceForm.value.range.maxn = null
-    priceForm.value.range.minn = null
+    form.value.price = []
+    form.value.priceRange.minn = null
+    form.value.priceRange.maxn = null
   } else if(lastFilterType.value === 'way'){
-    wayForm.value = []
+    form.value.way = ''
   } else if(lastFilterType.value === 'type'){
-    typeForm.value = []
+    form.value.type = []
   } else if(lastFilterType.value === 'more'){
-    for(let key in moreForm.value){
-      moreForm.value[(key as keyof moreFormType)] = []
-    }
+    form.value.toward = []
+    form.value.area = []
+    form.value.feature = []
+    form.value.tenancy = []
+    form.value.floor = []
+    form.value.elevator = []
   }
+  emits('searchWithOptions')
 }
+
 // 关闭过滤表单
 const closeForm = () => {
   showFilterDetal.value = false
   lastFilterType.value = ''
 }
+
 // 点击区域外关闭
 const locationRef = ref<HTMLElement>()
 const filterRef = ref<HTMLElement>()
@@ -221,11 +251,13 @@ const handleClickOutside = (e: MouseEvent) => {
     showLocation.value = false
   }
 }
+
 // 提交筛选类型
-const handleFilter = () => {
+const handleFilter = async () => {
+  await emits('searchWithOptions')
   closeForm()
-  // .....
 }
+
 // 获取筛选项
 const getFilter = (arr: string[]) => {
   let filters: filterItemType[] = []
@@ -236,34 +268,49 @@ const getFilter = (arr: string[]) => {
   })
   return filters
 }
+
 // 筛选按钮active状态
 const activeFilter = computed(() => (type: 'price'|'way'|'type'|'more'): boolean => {
   if(type === 'price'){
-    return priceForm.value.options.length > 0
-      || priceForm.value.range.maxn !== null || priceForm.value.range.minn != null
+    return form.value.price.length > 0
+      || form.value.priceRange.maxn !== null || form.value.priceRange.minn != null
   } else if(type === 'way'){
-    return wayForm.value.length > 0
+    return form.value.way.length > 0
   } else if(type === 'type'){
-    return typeForm.value.length > 0
+    return form.value.type.length > 0
   } else if(type === 'more'){
-    for(let item in moreForm.value) {
-      if(moreForm.value[(item as keyof moreFormType)].length > 0){
-        return true
-      }
-    }
+    return form.value.toward.length > 0
+      || form.value.area.length > 0
+      || form.value.feature.length > 0
+      || form.value.tenancy.length > 0
+      || form.value.floor.length > 0
+      || form.value.elevator.length > 0
   }
   return false
 })
+
 // 清除筛选
 const clearAll = () => {
-  priceForm.value.options = []
-  priceForm.value.range.maxn = null
-  priceForm.value.range.minn = null
-  wayForm.value = []
-  typeForm.value = []
-  for(let key in moreForm.value){
-    moreForm.value[(key as keyof moreFormType)] = []
+  form.value = {
+    way: '',
+    price: [],
+    priceRange: {
+      minn: null,
+      maxn: null
+    },
+    type: [],
+    toward: [],
+    area: [],
+    feature: [],
+    tenancy: [],
+    floor: [],
+    elevator: []
   }
+  emits('searchWithOptions')
+}
+
+const toDetail = (id: number) => {
+  navigate('/details', { 'houseId': id })
 }
 
 onMounted(() => {
@@ -323,18 +370,29 @@ onUnmounted(() => {
       padding: 0;
       margin: 0;
       list-style: none;
-    }
-    .infinite-list .infinite-list-item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 50px;
-      background: var(--el-color-primary-light-9);
-      margin: 10px;
-      color: var(--el-color-primary);
-    }
-    .infinite-list .infinite-list-item + .list-item {
-      margin-top: 10px;
+      .inf-item {
+        padding: 10px;
+        .inf-img {
+          width: 120px;
+          height: 80px;
+          object-fit: cover;
+        }
+        .inf-content {
+          margin-left: 10px;
+          .inf-title {
+            width: 220px;
+            height: 45px;
+            font-size: 16px;
+          }
+          .inf-tip {
+            color: $grayText;
+            font-size: 14px;
+          }
+          .inf-price {
+            color: red;
+          }
+        }
+      }
     }
   }
   .location_detal {
@@ -410,5 +468,11 @@ onUnmounted(() => {
       }
     }
   }
+}
+li {
+  margin: 20px 20px 10px 0;
+}
+.li_active {
+  color: $primary;
 }
 </style>

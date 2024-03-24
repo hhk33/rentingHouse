@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     head: {
       title: '安居',
       meta: [
-        { name: 'description', content: '自助房屋租赁平台' }
+        { name: 'description', content: '自助房屋租赁平台 房屋租赁 出租' }
       ],
       script: [
       ]
@@ -32,5 +32,22 @@ export default defineNuxtConfig({
     }
   },
   svgSprite: {
+  },
+  nitro: {
+    devProxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+      },
+      "/img": {
+        target: "https://renting-house-qz.oss-cn-beijing.aliyuncs.com",
+        changeOrigin: true,
+      }
+    },
+  },
+  loading: {
+    color: 'green',
+    height: '5px',
+    throttle: 0
   }
 })

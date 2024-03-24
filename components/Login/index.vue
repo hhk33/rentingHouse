@@ -6,6 +6,7 @@
         width="400"
         center
         align-center
+        @close="clearData"
       >
       <div class="content" v-show="!forgetPas">
         <div class="login-type flex">
@@ -35,10 +36,14 @@
                 class="login-input"
                 v-model="messageLogin.code"
                 placeholder="请输入短信验证码"
-                :maxlength="4"
+                :maxlength="6"
               />
             </el-form-item>
-            <a class="get-code">获取验证</a>
+            <a :class="['get-code', {'get-code-disabled':codeTime > 0}]"
+              @click="getCode(messageLogin.phoneNum)"
+            >
+              {{codeTime <= 0? '获取验证码': `${codeTime}秒后重发` }}
+            </a>
           </el-form>
         </div>
         <div class="login-box flex-col" v-show="loginType === '01'">
@@ -63,9 +68,9 @@
           </el-form>
         </div>
         <p class="error-tip">{{ errorTip }}</p>
-        <button class="btn primary-btn login" @click="login">登 录</button>
+        <button class="btn primary-btn login" @click="handleLogin">登 录</button>
         <div class="flex login-remember">
-          <el-checkbox v-model="laterChecked" label="7天内免登录" size="large" />
+          <span></span>
           <a v-show="loginType === '01'" @click="changeForgetPas(true)">忘了密码</a>
         </div>
         <p class="login-tip">未注册过的手机号，验证通过后自动注册账号</p>
@@ -90,10 +95,14 @@
                 class="login-input"
                 v-model="forgetPasMsg.code"
                 placeholder="请输入短信验证码"
-                :maxlength="4"
+                :maxlength="6"
               />
             </el-form-item>
-          <a class="get-code">获取验证</a>
+            <a :class="['get-code', {'get-code-disabled':codeTime > 0}]"
+              @click="getCode(forgetPasMsg.phoneNum)"
+            >
+              {{codeTime <= 0? '获取验证码': `${codeTime}秒后重发` }}
+            </a>
           <el-form-item prop="password">
             <el-input
               class="login-input"
@@ -118,7 +127,9 @@ import { ref, reactive } from 'vue'
 import useStore from '~/composables/store'
 import { storeToRefs } from 'pinia'
 import { phoneNumValidate, passwordValidate } from '~/utils/validate'
-import { Obj } from '~/types/login'
+import type { messageLoginType, passwordLoginType, forgetPasType, LoginResponse } from '~/types/login'
+import { userLogin, codeLogin, sendCode, getUserInfo, forgetPassword } from '~/api/user'
+import { setToken, setRefreshToken } from '~/utils/token'
 
 const userStore = useStore.user()
 const { dialogVisible } = storeToRefs(userStore)
@@ -126,15 +137,17 @@ const { dialogVisible } = storeToRefs(userStore)
 // 登录方式 00：短信登录 01：密码登录
 let loginType = ref('00')
 // 短信登录
-let messageLogin = reactive<Obj>({
+let messageLogin = reactive<messageLoginType>({
   phoneNum: '',
   code: ''
 })
 //密码登录
-let passwordLogin = reactive<Obj>({
+let passwordLogin = reactive<passwordLoginType>({
   phoneNum: '',
   password: ''
 })
+// 获取验证码倒计时
+let codeTime = ref(0)
 // 验证错误提示
 let errorTip = ref('')
 
@@ -145,6 +158,10 @@ const forgetFormRef = ref()
 const changeForgetPas = (val: boolean) => {
   forgetPas.value = val
   clearData()
+  if (timer) {
+    clearInterval(timer)
+  }
+  codeTime.value = 0
 }
 const changeType = (val: string) => {
   loginType.value = val
@@ -161,7 +178,6 @@ const clearData = () => {
   Object.keys(forgetPasMsg).forEach( key => forgetPasMsg[key] = '')
 }
 
-
 const checkPhoneNum = (rule: any, value: any, callback: any) => {
   if(phoneNumValidate.test(value)){
     callback()
@@ -173,11 +189,11 @@ const checkPhoneNum = (rule: any, value: any, callback: any) => {
   }
 }
 const checkCode = (rule: any, value: string, callback: any) => {
-  if(value.length === 4) {
+  if(value.length === 6) {
     callback()
   } else {
     if (errorTip.value === ''){
-      errorTip.value = '请输入4位短信验证码'
+      errorTip.value = '请输入6位短信验证码'
     }
     callback(new Error(''))
   }
@@ -199,27 +215,105 @@ const rules = {
   password: [{ required: true, validator: checkPassword, trigger: [] }]
 }
 
-// 7日内免登录
-let laterChecked = ref(false)
-
-const login = () => {
+const handleLogin = async () => {
   errorTip.value = ''
-  const validateRes: boolean = loginType.value === '00'
-    ? messageFormRef.value.validate() : passwordFormRef.value.validate()
-  if(!validateRes) return
+  let valiRes = true
+  if (loginType.value === '00') {
+    await messageFormRef.value.validate((vali: boolean) => {
+      if(!vali) {
+        valiRes = false
+      }
+    })
+  } else {
+    await passwordFormRef.value.validate((vali: boolean) => {
+      if(!vali) {
+        valiRes = false
+      }
+    })
+  }
+  if (!valiRes) return
+
+  let res: LoginResponse
+  if(loginType.value === '00'){
+    res = await codeLogin(messageLogin.phoneNum, messageLogin.code)
+  } else {
+    res = await userLogin(passwordLogin.phoneNum, passwordLogin.password)
+  }
+  if(res.code === 200){
+    // 登录成功
+    setToken(res.data.token)
+    setRefreshToken(res.data.refreshToken)
+    dialogVisible.value = false
+    ElMessage({
+      message: '登录成功',
+      type: 'success',
+    })
+    const userInfoRes = await getUserInfo()
+    if (userInfoRes.code === 200) {
+      userStore.setUserInfo(userInfoRes.data)
+    }
+  } else {
+    errorTip.value = res.message
+  }
 }
 
 // 忘记密码
 let forgetPas = ref(false)
-let forgetPasMsg = reactive<Obj>({
+let forgetPasMsg = reactive<forgetPasType>({
   phoneNum: '',
   password: '',
   code: ''
 })
 
+// 获取验证码
+const getCode = async (phoneNum: string) => {
+  if (codeTime.value > 0){
+    return
+  }
+  errorTip.value = ''
+  if(!phoneNum) {
+    errorTip.value = '请输入手机号'
+    return
+  }
+  let res = await sendCode(phoneNum, forgetPas.value? '02': '01')
+  if (res.code === 200) {
+    codeTime.value = 60
+    countDown()
+  } else {
+    ElMessage({
+      message: res.message,
+      type: 'error'
+    })
+  }
+}
+
+// 倒计时
+let timer: NodeJS.Timeout | null = null
+const countDown = () => {
+  timer = setInterval(() => {
+    codeTime.value--
+    if(codeTime.value <= 0) {
+      clearInterval(timer as NodeJS.Timeout)
+    }
+  }, 1000)
+}
+
 const eidtPas = () => {
   errorTip.value = ''
-  if(!forgetFormRef.value.validate()) return
+  forgetFormRef.value.validate(async (vali: boolean) => {
+    if(vali) {
+      let res = await forgetPassword(forgetPasMsg.phoneNum, forgetPasMsg.password, forgetPasMsg.code)
+      if(res.code === 200) {
+        forgetPas.value = false
+        ElMessage({
+          message: '修改',
+          type: 'success',
+        })
+      }
+    } else {
+      return false
+    }
+  })
 }
 </script>
 
@@ -275,6 +369,10 @@ const eidtPas = () => {
     right: 40px;
     color: $primary;
   }
+  .get-code-disabled {
+    color: $gray;
+    cursor: auto;
+  }
 }
 .error-tip {
   position: absolute;
@@ -289,7 +387,7 @@ const eidtPas = () => {
   font-weight: bold;
 }
 .login-remember {
-  margin: 0 25px;
+  margin: 10px 25px -10px 25px;
   justify-content: space-between;
 }
 .login-tip {

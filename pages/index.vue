@@ -3,7 +3,7 @@
     <HomeHeader />
     <HomeRecommend />
     <HomeLandload />
-    <Recommend />
+    <Recommend style="width: 1290px;"/>
   </div>
 </template>
 

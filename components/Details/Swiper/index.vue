@@ -9,16 +9,17 @@
     class="mySwiper2"
   >
     <swiper-slide>
-      <img src="@/assets/img/apartment_1.jpg" />
+      <img :src="srcList[0]" />
+      <div class="vr" @click="toRealSee"></div>
     </swiper-slide>
     <swiper-slide>
-      <img src="@/assets/img/apartment_2.jpg" />
+      <img :src="srcList[1]" />
     </swiper-slide>
     <swiper-slide>
-      <img src="@/assets/img/apartment_3.jpg" />
+      <img :src="srcList[2]" />
     </swiper-slide>
     <swiper-slide>
-      <img src="@/assets/img/apartment_4.jpg" />
+      <img :src="srcList[3]" />
     </swiper-slide>
   </swiper>
   <swiper
@@ -31,31 +32,42 @@
     class="mySwiper"
   >
     <swiper-slide>
-      <img src="@/assets/img/apartment_1.jpg" />
+      <img :src="srcList[0]" />
     </swiper-slide>
     <swiper-slide>
-      <img src="@/assets/img/apartment_2.jpg" />
+      <img :src="srcList[1]" />
     </swiper-slide>
     <swiper-slide>
-      <img src="@/assets/img/apartment_3.jpg" />
+      <img :src="srcList[2]" />
     </swiper-slide>
     <swiper-slide>
-      <img src="@/assets/img/apartment_4.jpg" />
+      <img :src="srcList[4]" />
     </swiper-slide>
   </swiper>
 </div>
 </template>
 
 <script lang="ts" setup>
-  import { ref } from 'vue'
+  import { ref, computed } from 'vue'
   import { Swiper, SwiperSlide } from 'swiper/vue'
   import { FreeMode, Navigation, Thumbs } from 'swiper/modules'
+
+  const props = defineProps(['houseId', 'houseImg'])
+  const srcList = computed(() => {
+    return props.houseImg.split('&')
+  })
 
   const thumbsSwiper = ref(null)
   const setThumbsSwiper = (swiper:any) => {
     thumbsSwiper.value = swiper
   }
   const modules = [FreeMode, Navigation, Thumbs]
+
+  const toRealSee = () => {
+    navigate('/realSee',
+      { houseId: props.houseId }
+    )
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -67,12 +79,23 @@
   height: 100%;
   width: 800px;
   .swiper-slide {
+    position: relative;
     display: flex;
     justify-content: center;
     img {
       width: 540px;
       height: 300px;
       object-fit: cover;
+    }
+    .vr {
+      position: absolute;
+      bottom: -10px;
+      left: 140px;
+      width: 100px;
+      height: 100px;
+      background: url('@/assets/img/vr.png') no-repeat;
+      background-size: contain;
+      cursor: pointer;
     }
   }
   .swiper-button-prev {

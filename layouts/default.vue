@@ -1,19 +1,37 @@
 <template>
-  <div>
-    <div class="header header-shadow" :style="{background: `rgba(255, 255, 255, ${opacity})`}">
+  <div >
+    <div
+      class="header header-shadow"
+      :style="{background: `rgba(255, 255, 255, ${opacity})`}"
+      v-show="route.path !== '/realSee'"
+    >
       <img src="@/assets/img/logo.png" @click="navigate('/')">
       <div class="list">
         <div class="search" v-show="opacity === 1">
-          <el-input :prefix-icon="Search" />
+          <el-input
+            v-model="searchVal"
+            :prefix-icon="Search"
+            @keyup.enter="navigate('/search', {'search': searchVal})"
+          />
         </div>
         <div class="details flex">
           <div class="btn">我要租房</div>
           <div class="btn" @click="navigate('/proprietor')">我要出租</div>
-          <div class="btn">联系我们</div>
+          <div  v-if="userInfo.avatar" class="btn" @click="toMessage">我的消息</div>
           <div class="login flex">
-            <div class="btn active" @click="setDialogVisible(true)">登录</div>
-            <!-- <el-avatar :size="28" :src="circleUrl" />
-            <span class="username">137****0000</span> -->
+            <el-dropdown v-if="userInfo.avatar">
+              <div class="flex" style="cursor: pointer;">
+                <el-avatar :size="28" :src="userInfo.avatar" />
+                <span class="username">{{ userInfo.nickname }}</span>
+              </div>
+              <template #dropdown>
+                <el-dropdown-menu >
+                  <el-dropdown-item @click="navigate('/user')">个人中心</el-dropdown-item>
+                  <el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+            <div v-else class="btn active" @click="setDialogVisible(true)">登录</div>
           </div>
         </div>
         <div class="operation">
@@ -39,12 +57,17 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import useStore from '@/composables/store'
+import { getUserInfo, userLogout } from '~/api/user'
+import { getToken, getRefreshToken, removeToken, removeRefreshToken } from '~/utils/token'
+import { storeToRefs } from 'pinia'
 
 const userStore = useStore.user()
-const { setDialogVisible } = userStore
-
+const { userInfo } = storeToRefs(userStore)
+const { setDialogVisible, clearUserInfo } = userStore
 const route = useRoute()
-// const circleUrl = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+
+let searchVal = ref('')
+
 const opacity = ref(0.2)
 // 根据页面滚动，改变顶部导航栏透明度
 const handleScroll = () => {
@@ -67,8 +90,32 @@ watch(() => route.path, () =>{
   }
 }, { immediate: true })
 
+const handleGetUserInfo = async () => {
+  if (getToken()) {
+    const res = await getUserInfo()
+    if (res.code === 200) {
+      userStore.setUserInfo(res.data)
+    }
+  }
+}
+
+const handleLogout = async () => {
+  const res = await userLogout(getRefreshToken())
+  if (res.code === 200) {
+    removeToken()
+    removeRefreshToken()
+    clearUserInfo()
+  }
+}
+
+const toMessage = () => {
+  // 验证登录状态
+  navigate('/message')
+}
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
+  setTimeout(handleGetUserInfo, 0)
 })
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', handleScroll)
@@ -131,6 +178,10 @@ onBeforeUnmount(() => {
 }
 .operation {
   display: none;
+}
+
+:deep(.el-tooltip__trigger:focus-visible) {
+  outline: unset;
 }
 
 // @media screen and (min-width: 824px){

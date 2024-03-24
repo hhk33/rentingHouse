@@ -10,37 +10,41 @@
         height="460px"
         indicator-position="outside"
       >
-        <el-carousel-item v-for="item in 3" :key="item">
+        <el-carousel-item v-for="item in carouselDate" :key="item">
           <div class="about">
-            <p class="title">萍水街地铁口两室一厅押一付一</p>
-            <p class="area">二居+ 45.00-60.00㎡</p>
-            <p class="price">2680-2690元/月</p>
+            <p class="title">{{ item.title }}</p>
+            <p class="area">{{ item.desc }}   {{ item.area }}㎡</p>
+            <p class="price">{{ item.rent }}元/月</p>
             <p class="sub-title">房屋设施</p>
             <div class="icon-list flex">
-              <Icon class="icon-item" img="refrigerator" name="冰箱" :size="15"/>
-              <Icon class="icon-item" img="washing" name="洗衣机" :size="15"/>
-              <Icon class="icon-item" img="heater" name="热水器" :size="15"/>
-              <Icon class="icon-item" img="gas" name="天然气" :size="15"/>
-              <Icon class="icon-item" img="wifi" name="宽带" :size="15"/>
-              <Icon class="icon-item" img="air-conditioning" name="空调" :size="15"/>
+              <Icon class="icon-item" img="washing" name="洗衣机" :size="15" :disabled="item.facilities[0] === '0'"/>
+              <Icon class="icon-item" img="air-conditioning" name="空调" :size="15" :disabled="item.facilities[1] === '0'"/>
+              <Icon class="icon-item" img="refrigerator" name="冰箱" :size="15" :disabled="item.facilities[4] === '0'"/>
+              <Icon class="icon-item" img="heater" name="热水器" :size="15" :disabled="item.facilities[5] === '0'"/>
+              <Icon class="icon-item" img="bed" name="床" :size="15" :disabled="item.facilities[6] === '0'"/>
+              <Icon class="icon-item" img="heating" name="暖气" :size="15" :disabled="item.facilities[7] === '0'"/>
+              <Icon class="icon-item" img="wifi" name="宽带" :size="15" :disabled="item.facilities[8] === '0'"/>
+              <Icon class="icon-item" img="gas" name="天然气" :size="15" :disabled="item.facilities[9] === '0'"/>
             </div>
             <div class="apartment-info flex">
-              <img class="apt-img" src="~/assets/img/apt.jpg">
+              <img class="apt-img" :src="item.avatar">
               <div>
-                <h3>桂晶</h3>
-                <span>乐柚公寓</span>
+                <h3>{{ item.name }}</h3>
+                <span class="ins">{{ item.institutionName }}</span>
               </div>
-              <div class="apt-btn">
+              <div
+                class="apt-btn"
+                @click="navigate('/message', { to: 'broker' + item.brokerId })">
                 <el-icon><ChatDotRound /></el-icon>
                 在线咨询
               </div>
             </div>
           </div>
           <div class="content">
-            <img class="img_1" src="~/assets/img/apartment_1.jpg">
-            <img class="img_2" src="~/assets/img/apartment_2.jpg">
-            <img class="img_3" src="~/assets/img/apartment_3.jpg">
-            <img class="img_4" src="~/assets/img/apartment_4.jpg">
+            <img class="img_1" :src="item.houseImg.split('&')[0]">
+            <img class="img_2" :src="item.houseImg.split('&')[1]">
+            <img class="img_3" :src="item.houseImg.split('&')[2]">
+            <img class="img_4" :src="item.houseImg.split('&')[3]">
           </div>
         </el-carousel-item>
       </el-carousel>
@@ -49,10 +53,25 @@
 </template>
 
 <script setup lang="ts">
+import { getCarousel } from '@/api/info'
+import { ref, onMounted } from 'vue'
+
+let carouselDate = ref<any[]>([])
+const getCarouselData = async () => {
+  const res: any = await getCarousel()
+  carouselDate.value = res.data
+}
+
+onMounted(() => {
+  setTimeout (()=> {
+    getCarouselData()
+  }, 0)
+})
 </script>
 
 <style lang="scss" scoped>
 .carousel-box {
+  width: 1290px;
   .carousel {
     width: 100%;
     min-width: 500px;
@@ -132,11 +151,16 @@
           width: 140px;
           height: 40px;
           line-height: 40px;
-          margin-left: 100px;
           border-radius: 40px;
           text-align: center;
+          cursor: pointer;
           background-color: $primary;
           color: #ffffff;
+        }
+        .ins {
+          display: block;
+          width: 200px;
+          font-size: 14px;
         }
       }
     }

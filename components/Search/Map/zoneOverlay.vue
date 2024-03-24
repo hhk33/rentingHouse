@@ -5,9 +5,9 @@
     class="zone"
     pane="labelPane"
     @draw="draw">
-    <div >
-      <p>{{text.name}}</p>
-      <p>{{text.count}}套</p>
+    <div :style="{ fontSize: text.title.length > 4 ? 14 : 16 + 'px' }">
+      <p>{{text.title}}</p>
+      <p>{{text.total}}套</p>
     </div>
   </BmOverlay>
 </template>
@@ -19,7 +19,7 @@ import { BmOverlay } from 'vue-baidu-map-3x'
 const customRef = ref()
 const { text, position } = defineProps(['text', 'position'])
 
-watch(()=>position, ()=>{
+watch(()=>text, ()=>{
   customRef.value.reload()
 }, { deep: true })
 
@@ -64,16 +64,19 @@ const draw = ({ el, BMap, map }: DrawType) => {
       display: flex;
       flex-wrap: wrap;
       overflow: hidden;
-      text-overflow: ellipsis;
       white-space: nowrap;
-      justify-content: space-between;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
       p {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         width: 100%;
         text-align: center;
-        line-height: 16px;
+        line-height: 20px;
+        font-size: 14px;
       }
     }
   }

@@ -10,7 +10,12 @@
           </el-icon>
           <div class="btn">杭州</div>
         </div>
-        <el-input class="search" size="large" v-model.trim="searchVal">
+        <el-input
+          class="search"
+          size="large"
+          v-model.trim="searchVal"
+          @keyup.enter="navigate('/search', {'search': searchVal})"
+        >
           <template #prepend>
             <el-icon class="search-icon" :size="22">
               <Search/>

@@ -1,25 +1,53 @@
 <template>
   <div class="flex house-item">
-    <img src="@/assets/img/recommand.png" alt="">
+    <img :src="houseData.houseImg.split('&')[0]" alt="">
     <div class="info">
-      <h4 class="title">整租·上亿SOHO 1室0厅 西南</h4>
-      <p class="desc">余杭-良渚-上亿SOHO / 80.00㎡ /西南 / 1室0厅1卫</p>
+      <h4 class="title">{{ houseData.title }}</h4>
+      <p class="desc">
+        {{ houseData.cityId }}-{{ houseData.districtId }}-{{ houseData.village }} /
+         {{ houseData.area }}㎡ /{{ houseData.direct }} / {{ houseData.desc }}
+      </p>
       <div class="tags flex">
-        <p class="tag">新上</p>
-        <p class="tag">近地铁</p>
-        <p class="tag">随时看房</p>
-        <p class="tag">精装</p>
-        <p class="tag">押一付一</p>
-        <p class="tag">VR看房</p>
+        <p class="tag" v-show="isNewHouse(houseData.updateTime)">新上</p>
+        <p class="tag" v-show="houseData.decorationStatus === '02'">精装</p>
+        <p class="tag" v-show="houseData.rentingType === '02'">公寓</p>
+        <p class="tag" v-show="houseData.elevator === '01'">有电梯</p>
+        <p class="tag" v-show="houseData.floor > 0">{{ floor }}</p>
+        <p class="tag" v-show="houseData.rentUnit === '00'">月付</p>
+        <p class="tag" v-show="houseData.vr === '01'">VR看房</p>
       </div>
-      <p class="source">自如</p>
+      <p class="source">
+        <el-icon><AlarmClock /></el-icon>
+        维护时间：{{ houseData.maintenanceTime }}
+      </p>
     </div>
-    <p class="price">2800 元/月</p>
+    <p class="price">{{ houseData.rent }} 元/月</p>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 
+let props = defineProps(['houseData'])
+const { houseData } = props
+
+const floor = computed(() => {
+  const num = houseData.floor / houseData.totalFloor
+  if (num < 1/3) {
+    return '低楼层'
+  } else if (num >= 1/3 && num < 2/3) {
+    return '中楼层'
+  } else {
+    return '高楼层'
+  }
+})
+
+const isNewHouse = date => {
+  const inputDate = new Date(date.replace(/-/g, '/'))
+  const currentDate = new Date()
+  currentDate.setMonth(currentDate.getMonth() - 2)
+  return inputDate > currentDate
+}
 </script>
 
 <style lang="scss" scoped>
@@ -30,7 +58,7 @@
     padding: 20px;
     box-sizing: border-box;
     border-radius: 10px;
-
+    
     img {
       width: 180px;
       height: 140px;
@@ -73,6 +101,7 @@
 
       .source {
         color: $gray;
+        font-size: 14px;
       }
     }
 

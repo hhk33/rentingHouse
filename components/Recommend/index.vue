@@ -11,12 +11,17 @@
       </div>
     </div>
     <div class="rec-list flex" :style="{fontSize: props.size + 'px'}">
-      <div class="rec-item" v-for="item in props.num" :key="item">
-        <img src="@/assets/img/recommand.png" alt="">
-        <h4 class="title">整租·万马伊顿庄园 3室2厅</h4>
+      <div
+        class="rec-item"
+        v-for="item in houseList"
+        :key="item.houseId"
+        @click="toDetail(item.houseId)"
+      >
+        <img :src="item.houseImg.split('&')[0]" alt="">
+        <h4 class="title">{{ item.title }} · {{ item.area }}m²</h4>
         <div class="flex">
-          <p class="area">临安 / 3室2厅2卫</p>
-          <p class="price">3000 元/月</p>
+          <p class="area">{{ item.districtId }} / {{ item.desc }}</p>
+          <p class="price">{{ item.rent }} 元/月</p>
         </div>
       </div>
     </div>
@@ -24,7 +29,9 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
+import { reqGetRecommend } from '@/api/info'
+import useStore from '~/composables/store'
 
 const props = defineProps({
   size: {
@@ -40,10 +47,24 @@ const props = defineProps({
 const router = useRouter()
 const path = router.currentRoute.value.path
 
-const refresh = () => {}
+const userStore = useStore.user()
+let houseList = ref([])
+const refresh = async () => {
+  const { userId } = userStore.userInfo
+  let res = await reqGetRecommend(userId, props.num)
+  if(res.code === 200) {
+    houseList.value = res.data
+  }
+}
+
+const toDetail = (id: number) => {
+  navigate('/details', { 'houseId': id })
+}
 
 onMounted(() => {
-  refresh()
+  setTimeout(() => {
+    refresh()
+  }, 0)
 })
 </script>
 
@@ -60,10 +81,11 @@ onMounted(() => {
       width: 100%;
       height: 9em;
       border-radius: 10px;
+      object-fit: cover;
     }
     .title {
       margin: 10px 0;
-      font-size: 0.9em;
+      font-size: 0.8em;
     }
     .flex {
       justify-content: space-between;
